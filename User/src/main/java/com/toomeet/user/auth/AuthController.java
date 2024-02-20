@@ -28,13 +28,13 @@ public class AuthController {
     }
 
     @PostMapping("otp/verify")
-    public ResponseEntity<UserAuthenticatedResponseDto> verifyOtp(@RequestParam("o") String otpId, @RequestParam("p") String profileId, @RequestBody VerifyOtpRequestDto dto) {
+    public ResponseEntity<UserAuthenticatedResponseDto> verifyOtp(@RequestParam("o") String otpId, @RequestParam("p") String profileId, @RequestBody @Valid VerifyOtpRequestDto dto) {
         UserAuthenticatedResponseDto userAuthenticatedResponse = authService.verifyOtpAndCreateUser(otpId, profileId, dto);
         return new ResponseEntity<>(userAuthenticatedResponse, HttpStatus.OK);
     }
 
     @PostMapping("otp/2fa/verify")
-    public ResponseEntity<UserAuthenticatedResponseDto> verify2FaOtp(@RequestParam("o") String otpId, @RequestParam("p") String profileId, @RequestBody VerifyOtpRequestDto dto) {
+    public ResponseEntity<UserAuthenticatedResponseDto> verify2FaOtp(@RequestParam("o") String otpId, @RequestParam("p") String profileId, @RequestBody @Valid VerifyOtpRequestDto dto) {
         UserAuthenticatedResponseDto userAuthenticatedResponse = authService.verifyOtpAndLogin(otpId, profileId, dto);
         return new ResponseEntity<>(userAuthenticatedResponse, HttpStatus.OK);
     }

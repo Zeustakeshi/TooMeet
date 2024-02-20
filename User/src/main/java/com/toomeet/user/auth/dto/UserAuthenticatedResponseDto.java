@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 public class UserAuthenticatedResponseDto {
-    private UserResponseDto profile;
+    private UserResponseDto user;
     private String token;
     private Long expireIn;
     @Builder.Default

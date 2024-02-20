@@ -1,7 +1,6 @@
 package com.toomeet.user.user;
 
 
-import com.toomeet.user.image.Image;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,10 +9,12 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -34,23 +35,14 @@ public class User implements UserDetails {
 
     private String password;
 
-    private Date dateOfBirth;
-
-    private String description;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Image background;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Image avatar;
-
-    private Gender gender;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Collection<UserRole> roles;
-
     @Builder.Default
     private boolean is2FA = false;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserRole> roles;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Profile profile;
 
     @CreationTimestamp
     private Date createdAt;
@@ -58,14 +50,20 @@ public class User implements UserDetails {
     @UpdateTimestamp
     private Date updatedAt;
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+
+        return this.roles
+                .stream()
+                .map(
+                        role -> new SimpleGrantedAuthority("ROLE_" + role)
+                ).toList();
     }
 
     @Override
     public String getUsername() {
-        return this.email;
+        return this.name;
     }
 
     @Override
@@ -87,6 +85,7 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-
 }
+
+
+

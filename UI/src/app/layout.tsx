@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeProvider";
+import { AuthProvider } from "@/context/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,8 +26,10 @@ export default function RootLayout({
                     enableSystem
                     disableTransitionOnChange
                 >
-                    <Header></Header>
-                    <div className="bg-primary/0">{children}</div>
+                    <AuthProvider>
+                        <Header></Header>
+                        <div className="bg-primary/0">{children}</div>
+                    </AuthProvider>
                 </ThemeProvider>
             </body>
         </html>

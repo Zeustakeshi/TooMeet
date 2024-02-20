@@ -1,48 +1,50 @@
 server:
-  port: ${PORT:8080}
+    port: ${PORT:8082}
 spring:
-  redis:
-    uri: ${REDIS_URL:redis://default:BAO5fAB6H2MPPkh2HmlAcclpOinAibCi@roundhouse.proxy.rlwy.net:56062}
-  application:
-    name: user-service
-  jpa:
-    database: postgresql
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-  datasource:
-    url: ${DB_HOST:jdbc:postgresql://viaduct.proxy.rlwy.net:48627/railway}
-    driver-class-name: org.postgresql.Driver
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:g4*f21CC1*Gfa5CdgDDe*AF4423-BGAf}
-  mail:
-    host: ${MAIL_HOST:sandbox.smtp.mailtrap.io}
-    username: ${MAIL_USER:1a4d5226bf071f}
-    password: ${MAIL_PASSWORD:60dd54a0512e1c}
-    port: ${MAIL_PORT:2525}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
+    redis:
+        uri: ${REDIS_URL:redis://default:434H3LeG424DOFKGnJ3aDLdnF3bk4O6L@viaduct.proxy.rlwy.net:54722}
+    application:
+        name: user-service
+    jpa:
+        database: postgresql
+        show-sql: true
+        hibernate:
+            ddl-auto: create
+        properties:
+            hibernate:
+                format_sql: true
+    datasource:
+        url: ${DB_HOST:jdbc:postgresql://roundhouse.proxy.rlwy.net:13661/railway}
+        driver-class-name: org.postgresql.Driver
+        username: ${DB_USER:postgres}
+        password: ${DB_PASSWORD:2DE*32C2-1634-DG1-be6bc-Ff6FFef3}
+    mail:
+        host: ${MAIL_HOST:sandbox.smtp.mailtrap.io}
+        username: ${MAIL_USER:1a4d5226bf071f}
+        password: ${MAIL_PASSWORD:60dd54a0512e1c}
+        port: ${MAIL_PORT:2525}
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
 
 jwt:
-  secret_key: ${TOKEN_SECRET_KEY:KqLaJQJXIfarUZFJ39BfpcWw9vyx9VMOd5SSLDIsu9ajKavYop96uOez20yCDrucd/s=}
-  expired_time: ${TOKEN_EXPIRED_TIME:7200000 } # 2 hours
+    secret_key: ${TOKEN_SECRET_KEY:KqLaJQJXIfarUZFJ39BfpcWw9vyx9VMOd5SSLDIsu9ajKavYop96uOez20yCDrucd/s=}
+    expired_time: ${TOKEN_EXPIRED_TIME:7200000 } # 2 hours
 otp:
-  expired_time: ${OTP_EXPIRED_TIME:300000}
+    expired_time: ${OTP_EXPIRED_TIME:300000}
 
 management:
-  endpoint:
-    health:
-      show-details: always
+    endpoint:
+        health:
+            show-details: always
 
 eureka:
-  client:
-    service-url:
-      defaultZone: ${DISCOVERY_URL:localhost:4000}
+    client:
+        service-url:
+            defaultZone: ${DISCOVERY_URL:https://discovery-aoyd.onrender.com/eureka}
+    instance:
+#    prefer-ip-address: true
+
