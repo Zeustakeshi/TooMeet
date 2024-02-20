@@ -11,5 +11,17 @@ public class AppConfig {
         return new Gson();
     }
 
+//    @Bean
+//    public WebMvcConfigurer corsConfig() {
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addCorsMappings(@NonNull CorsRegistry registry) {
+//                registry.addMapping("/**")
+//                        .allowedOrigins("*")
+//                        .allowedMethods(HttpMetho.GET, HttpMethod.POST, HttpMethod.PATCH, HttpMethod.DELETE)
+//                        .allowedHeaders(HttpHeaders.CONTENT_TYPE, HttpHeaders.AUTHORIZATION);
+//            }
+//        };
+//    }
 
 }
