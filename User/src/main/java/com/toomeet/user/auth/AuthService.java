@@ -10,6 +10,7 @@ import com.toomeet.user.exceptions.NotFoundException;
 import com.toomeet.user.jwt.JwtService;
 import com.toomeet.user.mail.MailService;
 import com.toomeet.user.mail.OtpMail;
+import com.toomeet.user.user.Profile;
 import com.toomeet.user.user.User;
 import com.toomeet.user.user.UserRepository;
 import com.toomeet.user.user.UserRole;
@@ -34,6 +35,7 @@ public class AuthService {
     private final OTPService otpService;
     private final MailService mailService;
     private final JwtService jwtService;
+
 
     public AuthenticationResponseDto register(UserRegisterDto dto) {
         // Check if the user already exists in the repository by email
@@ -106,6 +108,7 @@ public class AuthService {
                 .email(profile.getEmail())
                 .expireIn(newExpiredTime)
                 .otpId(otpId)
+                .profileId(profileId)
                 .build();
     }
 
@@ -126,7 +129,7 @@ public class AuthService {
             String token = jwtService.generateToken(user);
             return UserAuthenticatedResponseDto
                     .builder()
-                    .profile(userResponse)
+                    .user(userResponse)
                     .token(token)
                     .expireIn(jwtService.getTokenExpiredTime())
                     .build();
@@ -178,7 +181,7 @@ public class AuthService {
 
         return UserAuthenticatedResponseDto
                 .builder()
-                .profile(userResponse)
+                .user(userResponse)
                 .token(token)
                 .expireIn(jwtService.getTokenExpiredTime())
                 .build();
@@ -193,7 +196,7 @@ public class AuthService {
         String token = jwtService.generateToken(mapper.map(userProfile, User.class));
         return UserAuthenticatedResponseDto
                 .builder()
-                .profile(userProfile)
+                .user(userProfile)
                 .token(token)
                 .expireIn(jwtService.getTokenExpiredTime())
                 .build();
@@ -217,9 +220,8 @@ public class AuthService {
                 .email(dto.getEmail())
                 .name(dto.getName())
                 .password(dto.getPassword())
-                .dateOfBirth(dto.getDateOfBirth())
-                .gender(dto.getGender())
                 .build();
+
 
         user.setRoles(
                 roles
@@ -227,6 +229,16 @@ public class AuthService {
                         .map(role -> UserRole.builder().role(role).user(user).build())
                         .toList()
         );
+
+
+        Profile userProfile = Profile.builder()
+                .dateOfBirth(dto.getDateOfBirth())
+                .gender(dto.getGender())
+                .user(user)
+                .build();
+
+        user.setProfile(userProfile);
+
 
         return userRepository.save(user);
     }

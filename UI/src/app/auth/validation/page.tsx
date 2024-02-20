@@ -1,12 +1,18 @@
-import LoginForm from "@/components/form/LoginForm";
 import OtpForm from "@/components/form/OtpForm";
-import RegisterForm from "@/components/form/RegisterForm";
 import Logo from "@/components/ui/Logo";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import React from "react";
+import { redirect } from "next/navigation";
 
-const page = () => {
+const page = ({
+    searchParams,
+}: {
+    searchParams: { [key: string]: string | string[] | undefined };
+}) => {
+    const otpId = searchParams["o"] as string;
+    const profileId = searchParams["p"] as string;
+    const is2Fa = !!(searchParams["2fa"] as string);
+
+    if (!otpId || !profileId) redirect("/auth/register");
+
     return (
         <div className="p-6">
             <Logo size="md"></Logo>
@@ -14,10 +20,14 @@ const page = () => {
                 <div className=" w-full text-left leading-loose">
                     <h1 className="text-3xl font-semibold">Xác thực OTP</h1>
                     <span className="text-sm text-muted-foreground">
-                        Mã OTP đã được gửi đến địa chỉ email abc@gmail.com.
+                        Mã OTP đã được gửi đến địa chỉ email của bạn
                     </span>
                 </div>
-                <OtpForm></OtpForm>
+                <OtpForm
+                    is2Fa={is2Fa}
+                    profileId={profileId}
+                    otpId={otpId}
+                ></OtpForm>
             </div>
         </div>
     );

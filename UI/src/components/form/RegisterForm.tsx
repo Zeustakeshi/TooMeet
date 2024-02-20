@@ -1,10 +1,13 @@
 "use client";
+import api from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { createAccoutSchema } from "@/schema/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import moment from "moment";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button, buttonVariants } from "../ui/button";
@@ -26,19 +29,45 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../ui/select";
-import { useRouter } from "next/navigation";
 
 const RegisterForm = () => {
+    const [loading, setLoading] = useState<boolean>(false);
+
     const router = useRouter();
 
     const form = useForm<z.infer<typeof createAccoutSchema>>({
         resolver: zodResolver(createAccoutSchema),
     });
 
-    const onSubmit = (value: z.infer<typeof createAccoutSchema>) => {
-        console.log(value);
+    const onSubmit = async (value: z.infer<typeof createAccoutSchema>) => {
+        setLoading(true);
 
-        router.push("/auth/validation");
+        try {
+            const response = await api({
+                method: "POST",
+                url: `/auth/register`,
+                data: { ...value },
+            });
+
+            const data = response.data;
+
+            if (!data.otpId || !data.profileId) {
+                throw new Error("Đã có lỗi xảy ra vui lòng thử lại sau!");
+            }
+            router.push(`/auth/validation?o=${data.otpId}&p=${data.profileId}`);
+        } catch (error: any) {
+            for (const key in error) {
+                if (form.getValues(key as any))
+                    form.setError(key as any, {
+                        message: error[key],
+                    });
+                else {
+                    alert(error);
+                    break;
+                }
+            }
+        }
+        setLoading(false);
     };
 
     return (
@@ -67,7 +96,7 @@ const RegisterForm = () => {
                 {/* USERNAME */}
                 <FormField
                     control={form.control}
-                    name="username"
+                    name="name"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Tên người dùng</FormLabel>
@@ -81,10 +110,28 @@ const RegisterForm = () => {
                         </FormItem>
                     )}
                 />
+                {/* PASSWORD */}
+                <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Mật khẩu</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="password"
+                                    placeholder="********"
+                                    {...field}
+                                ></Input>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <FormField
                         control={form.control}
-                        name="birthday"
+                        name="dateOfBirth"
                         render={({ field }) => (
                             <FormItem className="w-full">
                                 <FormLabel className="">Ngày sinh</FormLabel>
@@ -119,7 +166,7 @@ const RegisterForm = () => {
                                         <Calendar
                                             mode="single"
                                             selected={field.value}
-                                            // showOutsideDays={false}
+                                            showOutsideDays={false}
                                             onSelect={field.onChange}
                                             disabled={(date) =>
                                                 date >
@@ -176,8 +223,12 @@ const RegisterForm = () => {
                         )}
                     />
                 </div>
-                <Button type="submit" className="w-full mt-5">
-                    Tạo tài khoản
+                <Button
+                    disabled={loading}
+                    type="submit"
+                    className="w-full mt-5"
+                >
+                    {loading ? "Đang xử lý" : " Tạo tài khoản "}
                 </Button>
             </form>
             <div className="w-full text-center">

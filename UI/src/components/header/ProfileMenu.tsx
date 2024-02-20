@@ -12,11 +12,13 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/context/AuthProvider";
+import Cookies from "js-cookie";
+
 import {
     Bell,
     CalendarDays,
     HelpCircle,
-    Languages,
     LogOut,
     LucideIcon,
     MessageSquareWarning,
@@ -27,28 +29,51 @@ import {
     User,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { ReactNode, useState } from "react";
 
 const ProfileMenu = () => {
     const { setTheme } = useTheme();
+
+    const router = useRouter();
+
+    const { user, setUser } = useAuth();
+
+    if (!user) return <></>;
+
+    const handleSignOut = () => {
+        Cookies.remove("access_token");
+        localStorage.clear();
+        setUser(null);
+        router.replace("/auth/login");
+    };
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger>
                 <Avatar>
-                    <AvatarImage></AvatarImage>
-                    <AvatarFallback>Alo</AvatarFallback>
+                    <AvatarImage
+                        loading={"lazy"}
+                        src={user?.profile.avatar || undefined}
+                    ></AvatarImage>
+                    <AvatarFallback>
+                        {user?.name.split(" ")[0][0]}
+                    </AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent translate="yes" className="min-w-72">
                 <div className="flex justify-start items-start gap-3 p-3">
                     <Avatar>
-                        <AvatarImage></AvatarImage>
-                        <AvatarFallback>Alo</AvatarFallback>
+                        <AvatarImage
+                            src={user?.profile.avatar || undefined}
+                        ></AvatarImage>
+                        <AvatarFallback>
+                            {user?.name.split(" ")[0][0]}
+                        </AvatarFallback>
                     </Avatar>
                     <div className="text-sm">
-                        <p className="font-semibold"> Nguyen Van A</p>
-                        <p className="text-muted-foreground">hieu@gmail.com</p>
+                        <p className="font-semibold">{user?.name}</p>
+                        <p className="text-muted-foreground">{user?.email}</p>
                     </div>
                 </div>
                 <DropdownMenuSeparator />
@@ -126,7 +151,7 @@ const ProfileMenu = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                     {/* LOGOUT */}
-                    <DropdownMenuItemIcon Icon={LogOut}>
+                    <DropdownMenuItemIcon onClick={handleSignOut} Icon={LogOut}>
                         Đăng xuất
                     </DropdownMenuItemIcon>
                 </DropdownMenuGroup>

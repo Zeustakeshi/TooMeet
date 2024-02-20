@@ -33,10 +33,14 @@ public class UserRole {
     @UpdateTimestamp
     private Date updatedAt;
 
+    @Override
+    public String toString() {
+        return role.name();
+    }
+
     public static enum Role {
         NORMAL_USER,
         PREMIUM,
         ADMIN
     }
-
 }
